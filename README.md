@@ -20,7 +20,8 @@ __주의사항__ *경북대yes에서 제공하는 전체성적파일 양식을 �
         #따옴표안에 chromedriver의 경로를 적습니다. 밑과 같은 위치라면 pass
         driver = webdriver.Chrome('C:\\chromedriver')
         
-        # 63번 줄에 있는 코드에서 엑셀에 끝 항목과 
+        # 63번 줄에 있는 코드에서 엑셀에 끝항목을 적어주세요 예로 F50에 끝난다면 F3 자리에 F50으로 고쳐주세요
+        # 여유공간을 두어도 무방합니다. 
         multiple_cells = load_ws['A2':'F3']
 
 ### 설정이 끝나면
