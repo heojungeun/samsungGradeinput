@@ -60,7 +60,7 @@ def gr_craw(sam_id, sam_pass):
     alert.accept()
     time.sleep(2)
 
-    multiple_cells = load_ws['A2':'F3']
+    multiple_cells = load_ws['A2':'F60']
     while 1:
         try:
             time.sleep(2)
