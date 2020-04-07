@@ -128,7 +128,7 @@ def gr_craw(sam_id, sam_pass):
 
         if list_r[0] == None:
             break
-        if list_r[1] == '':
+        if list_r[4] == '' or list_r[4]== None or list_r[1] == '' or list_r[1]== None:
             continue
 
         while 1:
