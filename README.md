@@ -4,7 +4,7 @@
 __주의사항__ *경북대yes에서 제공하는 전체성적파일 양식을 따릅니다. *파이썬 에디터가 필요합니다. pycharm, idle 상관 없습니다.
 
 ### 초기 설정
-1. 전체 파일을 다운로드합니다.
+1. gradecraw.py 파일을 다운로드합니다.
 2. 본인의 크롬의 버전에 맞는 chromdriver를 원하는 위치에 설치합니다. https://chromedriver.chromium.org/downloads
    * 경로를 기억해두셔야 합니다.
    
