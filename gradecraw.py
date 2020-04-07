@@ -228,6 +228,8 @@ def gr_craw(sam_id, sam_pass):
                     list_r[5]=list_r[5][0:-1]
                 elif 'S' in list_r[5]:
                     list_r[5] = 'PASS'
+                elif 'U' in list_r[5]:
+                    list_r[5] = 'FAIL'
 
                 # st_obtpov = 'applyform_tmp_obtpov_'+list_r[5]
                 st_obtpov = list_r[5]
