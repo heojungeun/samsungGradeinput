@@ -3,9 +3,18 @@ from selenium.webdriver.common.keys import Keys
 import time
 from openpyxl import load_workbook
 
+print("삼성채용 이메일을 입력해주세요")
+s_id = input()
+print("삼성채용 비밀번호를 입력해주세요(코드 내에서만 사용됩니다)")
+s_pa = input()
+print("전공명 id를 입력해주세요(예시: 'applyform_tmp_majcd_22XX'\n자세한 사항은 github readme를 참고해주세요)")
+majid = input()
+print("chromedriver 주소를 입력해주세요. 자세한 사항은 git readme를 참고해주세요.\n(예시:C:\\chromedriver, 맥 예시: /Users/jung/chromedriver_mac/chromedriver)")
+driveraddress = input()
+
 #### 삼성 아이디(이메일)와 비밀번호를 적어주세요
-s_id = '여기에 이메일을 적어주세요 삼성아이디(이메일)'
-s_pa = '여기에 비밀번호를 적어주세요'
+# s_id = '여기에 이메일을 적어주세요 삼성아이디(이메일)'
+# s_pa = '여기에 비밀번호를 적어주세요'
 
 # data_only=Ture로 해줘야 수식이 아닌 값으로 받아온다.
 #### 전체성적 엑셀파일을 이 파이썬 파일과 같은 위치에 놔둬야합니다.
@@ -17,8 +26,8 @@ load_wb = load_workbook("전체성적.xlsx", data_only=True)
 load_ws = load_wb['Sheet']
 
 # Chrome(' 이 위치에 chromedriver파일 위치를 넣어준다. 밑은 예시로 c드라이브안에 바로 넣었을때') driver connect
-driver = webdriver.Chrome('C:\\chromedriver')
-
+#driver = webdriver.Chrome('C:\\chromedriver')
+driver = webdriver.Chrome(driveraddress)
 cnt = 0
 
 def gr_craw(sam_id, sam_pass):
@@ -66,8 +75,8 @@ def gr_craw(sam_id, sam_pass):
             time.sleep(2)
             driver.find_element_by_name('tmp_schlcarrcdView').click()  ## 학사버튼클릭하기
             time.sleep(2)
-            driver.find_element_by_xpath(
-                '//*[@id="applyform_tmp_schlcarrcd_5"]'
+            driver.find_element_by_id(
+                'applyform_tmp_schlcarrcd_5'
             ).click()  ## 버튼클릭하기
             break
         except:
@@ -81,22 +90,32 @@ def gr_craw(sam_id, sam_pass):
                 'tmp_majcdView'
             ).click()  ## 전공명버튼클릭하기
             time.sleep(1)
-            driver.find_element_by_xpath(
-                '//*[@id="applyform_tmp_majcd_22WD"]'
-            ).click()  ## 버튼클릭하기
-            break
+            # 콤보박스가 닫혀있으면 display: none; 열려있으면 display: block;
+            checkmaj = driver.find_element_by_id('ComboDiv_tmp_majcd').get_attribute('style')
+            ########## 전공명 아이디는 개인마다 다름, 입력값으로 해놓으면 좋을
+            if "block" in checkmaj:
+                driver.find_element_by_id(
+                    majid
+                ).click()  ## 버튼클릭하기
+                break
+            else:
+                continue
         except:
             print('전공명선택 에러')
             time.sleep(5)
             continue
     while 1:
         try:
-            driver.find_element_by_name(
-                'tmp_retakeynView'
+            driver.find_element_by_id(
+                'tmp_retakeynId'
             ).click()  ## 버튼클릭하기
             time.sleep(2)
-            driver.find_element_by_id('applyform_tmp_retakeyn_N').click()  ## 버튼클릭하기
-            break
+            checkre = driver.find_element_by_id('ComboDiv_tmp_retakeyn').get_attribute('style')
+            if 'block' in checkre:
+                driver.find_element_by_id('applyform_tmp_retakeyn_N').click()  ## 버튼클릭하기
+                break
+            else:
+                continue
         except:
             print('재수강여부 에러')
             time.sleep(1)
@@ -114,32 +133,40 @@ def gr_craw(sam_id, sam_pass):
 
         while 1:
             try:
-                driver.find_element_by_name(
-                    'tmp_regyrView'
+                driver.find_element_by_id(
+                    'tmp_regyrId'
                 ).click()  ## 수강년도버튼클릭하기
                 time.sleep(1)
                 st_yr = 'applyform_tmp_regyr_'+ list_r[0][0:4]
-                driver.find_element_by_id(st_yr).click()
-                break
+                checkre = driver.find_element_by_id('ComboDiv_tmp_regyr').get_attribute('style')
+                if 'block' in checkre:
+                    driver.find_element_by_id(st_yr).click()  ## 버튼클릭하기
+                    break
+                else:
+                    continue
             except:
                 print('수강년도선택 에러')
                 time.sleep(1)
                 continue
         while 1:
             try:
-                driver.find_element_by_name(
-                    'tmp_semstView'
+                driver.find_element_by_id(
+                    'tmp_semstId'
                 ).click()  ## 버튼클릭하기
                 time.sleep(1)
                 st_semst = ''
-                if list_r[0][4]=='S':
-                    st_semst = 'applyform_tmp_semst_여름계절'
-                elif list_r[0][4] == 'W':
-                    st_semst = 'applyform_tmp_semst_겨울계절'
+                checksemst = driver.find_element_by_id('ComboDiv_tmp_semst').get_attribute('style')
+                if 'block' in checksemst:
+                    if list_r[0][4] == 'S':
+                        st_semst = 'applyform_tmp_semst_여름계절'
+                    elif list_r[0][4] == 'W':
+                        st_semst = 'applyform_tmp_semst_겨울계절'
+                    else:
+                        st_semst = 'applyform_tmp_semst_' + list_r[0][4]
+                    driver.find_element_by_id(st_semst).click()
+                    break
                 else:
-                    st_semst = 'applyform_tmp_semst_'+list_r[0][4]
-                driver.find_element_by_id(st_semst).click()  ## 학기버튼클릭하기
-                break
+                    continue
             except:
                 print('학기선택 에러')
                 time.sleep(1)
@@ -147,31 +174,44 @@ def gr_craw(sam_id, sam_pass):
         print(list_r)
         while 1:
             try:
-                driver.find_element_by_name(
-                    'tmp_majtypecdView'
+                driver.find_element_by_id(
+                    'tmp_majtypecdId'
                 ).click()  ## 과목유형버튼클릭하기
                 st_matype=''
                 time.sleep(1)
-                if '공학전공' in list_r[1]:
-                    driver.find_element_by_id('applyform_tmp_majtypecd_A').click() ## 전공 클릭
+                majtype = list_r[1]
+                checkmajtype = driver.find_element_by_id('ComboDiv_tmp_majtypecd').get_attribute('style')
+                if 'block' in checkmajtype:
+                    if '전공' in majtype and '기반' not in majtype:
+                        driver.find_element_by_id('applyform_tmp_majtypecd_A').click() ## 전공 클릭
+                    else:
+                        driver.find_element_by_id('applyform_tmp_majtypecd_C').click() ## 교양 클릭
+                    st_name = driver.find_element_by_id('tmp_majcurrinm')
+                    if st_name.is_enabled():
+                        break
                 else:
-                    driver.find_element_by_id('applyform_tmp_majtypecd_C').click() ## 교양 클릭
-                break
+                    continue
             except:
                 print('과목유형선택 에러')
                 time.sleep(1)
                 continue
-        st_name = driver.find_element_by_name('tmp_majcurrinm')
+
+        st_name = driver.find_element_by_id('tmp_majcurrinm')
         st_name.send_keys(list_r[3])
+
         while 1:
             try:
-                driver.find_element_by_name(
-                    'tmp_obtptView'
+                driver.find_element_by_id(
+                    'tmp_obtptId'
                 ).click()  ## 버튼클릭하기
                 time.sleep(2)
-                st_obtpt = 'applyform_tmp_obtpt_'+list_r[4]
-                driver.find_element_by_id(st_obtpt).click()  ## 버튼클릭하기
-                break
+                checkscore = driver.find_element_by_id('ComboDiv_tmp_obtpt').get_attribute('style')
+                if 'block' in checkscore:
+                    st_obtpt = 'applyform_tmp_obtpt_'+list_r[4]
+                    driver.find_element_by_id(st_obtpt).click()  ## 버튼클릭하기
+                    break
+                else:
+                    continue
             except:
                 print('학점선택 에러')
                 time.sleep(1)
@@ -180,20 +220,23 @@ def gr_craw(sam_id, sam_pass):
         while 1:
             try:
                 print('성적확인1')
-                driver.find_element_by_name(
-                    'tmp_obtpovView'
+                driver.find_element_by_id(
+                    'tmp_obtpovId'
                 ).click()  ## 버튼클릭하기
                 print('성적확인2')
                 if '0' in list_r[5]:
                     list_r[5]=list_r[5][0:-1]
                 elif 'S' in list_r[5]:
                     list_r[5] = 'PASS'
+
                 # st_obtpov = 'applyform_tmp_obtpov_'+list_r[5]
                 st_obtpov = list_r[5]
                 print('성적확인3',st_obtpov)
-                time.sleep(3)
-                driver.find_element_by_link_text(st_obtpov).click()  ## 버튼클릭하기
-                break
+                time.sleep(2)
+                checkscore = driver.find_element_by_id('ComboDiv_tmp_obtpov').get_attribute('style')
+                if 'block' in checkscore:
+                    driver.find_element_by_link_text(st_obtpov).click()  ## 버튼클릭하기
+                    break
             except:
                 print('성적선택 에러')
                 time.sleep(1)
@@ -204,11 +247,18 @@ def gr_craw(sam_id, sam_pass):
 
 gr_craw(s_id, s_pa)
 time.sleep(2)
-driver.find_element_by_name('abeektgtynView').click()
+driver.find_element_by_id('abeektgtynId').click()
 time.sleep(2)
-driver.find_element_by_id('applyform_abeektgtyn_B').click()
+checkabeek = driver.find_element_by_id('ComboDiv_abeektgtyn').get_attribute('style')
+if 'block' in checkabeek:
+    driver.find_element_by_id('applyform_abeektgtyn_A').click()
+else:
+    driver.find_element_by_id('abeektgtynId').click()
+    time.sleep(2)
+    driver.find_element_by_id('applyform_abeektgtyn_A').click()
 time.sleep(2)
-driver.find_element_by_xpath('//*[@id="budiv_mySheet_Save"]/a')
+driver.find_element_by_xpath('//*[@id="budiv_mySheet_Save"]/a').click()
+print('저장 버튼 클릭 완료. 만일을 대비해 확인 부탁드립니다.')
 
 # f.close()
 # driver.close()
