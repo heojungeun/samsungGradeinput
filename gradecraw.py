@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
-from openpyxl import load_workbook
+#from openpyxl import load_workbook
 import xlrd
 print("삼성채용 이메일을 입력해주세요")
 s_id = input()
@@ -19,7 +19,7 @@ abeekVar = input()
 #### yes.knu.ac.kr 에 있는 성적 전체엑셀파일 형식만 가능합니다.
 #### xls로 되어있다면 xlsx로 업그레이드 해주셔야합니다.
 #load_wb = load_workbook("전체성적.xlsx", data_only=True)
-load_wb = xlrd.open_workbook("전체성적.xlsx")
+load_wb = xlrd.open_workbook("전체성적.xls")
 # 시트 이름으로 불러오기
 #load_ws = load_wb['Sheet']
 load_ws = load_wb.sheet_by_index(0)
